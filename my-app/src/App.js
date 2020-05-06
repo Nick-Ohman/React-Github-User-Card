@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import './App.css';
-
+import {Search} from "./search"
 
 
 class App extends Component {
   state = {
-    dataText: '',
+    dataText: {},
     data: [],
     followerData: []
-  }
+  };
+  
+  componentWillMount() {
 
-  componentDidMount() {
     axios
       .get("https://api.github.com/users/Nick-Ohman")
       .then(res => {
@@ -31,49 +32,50 @@ class App extends Component {
 
   handleChanges = e => {
     this.setState({
-      dataText: e.target.value
+      ...this.state,
+      dataText:{[e.target.name]: e.target.value}
+      
     });
-    
+    console.log(this.state)
   };
 
-  fetchDataText = e => {
-    e.preventDefault()
-    axios
-    .get('https://api.github.com/users/Nick-Ohman/followers/')
-    .then(res => {
-      this.setState({followersData: res.data})
-    })
-    .catch(err => console.log(err));
-  }
+//   fetchDataText = item => {
 
+//     axios
+//     .get(`https://api.github.com/users/${item}`)
+//     .then(res => {
+//       console.log(res)
+//       this.setState({...this.state, followerData: res.data })
+      
+//     })
+//     .catch(err => console.log(err));
+  
+// }
   render() {
     return (
       <div className="card">
         <input
           type="text"
-          value={this.state.dataText}
+          name="search"
+          value={this.state.dataText.search}
           onChange={this.handleChanges}
         />
-        <button onClick={this.fetchDataText}>Find Friend</button>
+        <button onClick={()=>Search(this.state.dataText.search)
+          }>Find Friend</button>
         <div className="me2">
         <h1>React Github User Card!!</h1>
-        
           
           <div className="me">
             {this.state.data.name}
             <img src={this.state.data.avatar_url} />
             {this.state.data.login}<br></br>
             {this.state.data.location}
-
           </div>
         </div>
         <div className="followers">
-        
-
-
-          {this.state.followerData.map(person => (
+          {this.state.followerData.map((person, i) => (
             <div className="personcard">
-              <p key={person.id}>{person.login}</p><br></br>
+              <p key={i}>{person.login}</p><br></br>
               <img src={person.avatar_url} />
               <p >{person.name}</p><br></br>
             </div>
